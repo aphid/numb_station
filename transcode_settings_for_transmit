@@ -1,0 +1,2 @@
+ffmpeg -i example.webm -f wav -bitexact -acodec pcm_s16le -ar 22050 -ac 1 converted-example.wav
+sudo ./fm_transmitter -f 100.6 converted-example.wav
