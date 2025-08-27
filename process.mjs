@@ -115,7 +115,7 @@ Recording.prototype.segment = async function (chop) {
     }
     if (this.finishedNumbers.includes(chop.startTime)) {
         console.log(this.finishedNumbers, chop.startTime);
-        //await sleep(15000);
+        await sleep(15000);
         return Promise.resolve();
     }
     this.finishedNumbers.push(chop.startTime);
@@ -209,7 +209,7 @@ Recording.prototype.listen = async function () {
 
 
     console.log("working with", this.path);
-    //await sleep(5000);
+    await sleep(5000);
     //let denoise = await Echogarden.denoise(this.path);
     let recog;
     try {
@@ -284,7 +284,7 @@ let aligns = 0;
 
 Recording.prototype.scramble = async function (chop) {
     console.log("🍳🍳🍳 SCRAMBLE TIME 🍳🍳🍳");
-    //await sleep(8000);
+    await sleep(8000);
     /*     
     deets.name = chopname
     deets.number = chop.text;
@@ -320,12 +320,10 @@ Recording.prototype.scramble = async function (chop) {
         let eg;
         let number = false;
         eg = await Echogarden.recognize(`${this.scrambleDir}/${file}`, { "whisper.timestampAccuracy": "high" });
-        let nw;
-        if (eg.wordTimeline[0].text !== undefined) {
-            nw = this.numberWang(eg.wordTimeline[0].text);
-        } else {
+        if (!eg.wordTimeline.length) {
             continue;
         }
+        let nw = this.numberWang(eg.wordTimeline[0].text);
         console.log(nw);
         if (nw) {
             recogs++;
@@ -335,11 +333,10 @@ Recording.prototype.scramble = async function (chop) {
 
         } else {
             eg = await Echogarden.align(`${this.scrambleDir}/${file}`, chop.number, { "whisper.timestampAccuracy": "high" });
-            if (eg.wordTimeline[0].text !== undefined) {
-                nw = this.numberWang(eg.wordTimeline[0].text);
-            } else {
+            if (!eg.wordTimeline.length) {
                 continue;
             }
+            nw = this.numberWang(eg.wordTimeline[0].text);
             console.log(nw);
             if (nw) {
                 aligns++;
@@ -349,7 +346,7 @@ Recording.prototype.scramble = async function (chop) {
             }
 
         }
-        //await sleep(15000);
+        await sleep(15000);
         console.log(eg.wordTimeline[0].text);
         if (number && cS) {
             console.log(chop);
