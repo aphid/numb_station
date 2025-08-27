@@ -115,7 +115,7 @@ Recording.prototype.segment = async function (chop) {
     }
     if (this.finishedNumbers.includes(chop.startTime)) {
         console.log(this.finishedNumbers, chop.startTime);
-        await sleep(15000);
+        //await sleep(15000);
         return Promise.resolve();
     }
     this.finishedNumbers.push(chop.startTime);
@@ -209,7 +209,7 @@ Recording.prototype.listen = async function () {
 
 
     console.log("working with", this.path);
-    await sleep(5000);
+    //await sleep(5000);
     //let denoise = await Echogarden.denoise(this.path);
     let recog;
     try {
@@ -284,7 +284,7 @@ let aligns = 0;
 
 Recording.prototype.scramble = async function (chop) {
     console.log("🍳🍳🍳 SCRAMBLE TIME 🍳🍳🍳");
-    await sleep(8000);
+    //await sleep(8000);
     /*     
     deets.name = chopname
     deets.number = chop.text;
@@ -309,7 +309,7 @@ Recording.prototype.scramble = async function (chop) {
         console.error(e);
     }
     let cS = await this.checkScram(chop);
-    if (!cS){
+    if (!cS) {
         return Promise.resolve();
     }
 
@@ -320,17 +320,26 @@ Recording.prototype.scramble = async function (chop) {
         let eg;
         let number = false;
         eg = await Echogarden.recognize(`${this.scrambleDir}/${file}`, { "whisper.timestampAccuracy": "high" });
-        let nw = this.numberWang(eg.wordTimeline[0].text);
+        let nw;
+        if (eg.wordTimeline[0].text !== undefined) {
+            nw = this.numberWang(eg.wordTimeline[0].text);
+        } else {
+            continue;
+        }
         console.log(nw);
         if (nw) {
             recogs++;
             number = eg.wordTimeline[0].text;
             console.log(eg.wordTimeline[0].text, number);
             console.log(`🦪🦪🦪🦪🦪${recogs}    ${number}`);
-        
+
         } else {
             eg = await Echogarden.align(`${this.scrambleDir}/${file}`, chop.number, { "whisper.timestampAccuracy": "high" });
-            nw = this.numberWang(eg.wordTimeline[0].text);
+            if (eg.wordTimeline[0].text !== undefined) {
+                nw = this.numberWang(eg.wordTimeline[0].text);
+            } else {
+                continue;
+            }
             console.log(nw);
             if (nw) {
                 aligns++;
@@ -340,7 +349,7 @@ Recording.prototype.scramble = async function (chop) {
             }
 
         }
-        await sleep(15000);
+        //await sleep(15000);
         console.log(eg.wordTimeline[0].text);
         if (number && cS) {
             console.log(chop);
@@ -373,7 +382,7 @@ Recording.prototype.checkScram = async function (chop) {
     for (let file of files) {
         console.log(file, chop.startTime);
         if (file.includes(chop.startTime)) {
-            console.log("🙀🙀🙀🙀🙀🙀🙀🙀🙀", this.scramDir, file);
+            console.log("🙀🙀🙀🙀🙀🙀🙀🙀🙀", scramDir, file);
             console.log("prevented block", chop.startTime, this.name);
             await sleep(8500);
             return false;
